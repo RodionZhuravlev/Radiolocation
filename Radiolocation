@@ -1,0 +1,38 @@
+    @Test
+    @Transactional
+    @Rollback(false)
+    public void postToGraphql2() throws JsonProcessingException, JSONException {
+        String URL = "https://gt-space-data.herokuapp.com/graphql";
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("content-type", "application/json");
+
+        long startTime = System.currentTimeMillis();
+
+        List<Posts> list = postsRepository.findPostsByCategoryStringContaining("GATHERTOWN");
+        String query = "query gameData($apikey:String!,$spaceid:String!,$spacename:String!){gameData(spaceData:{apiKey: $apikey, spaceIdNum: $spaceid, spaceName: $spacename}){playerCount,}}";
+        String opertationName = "gameData";
+
+        list.forEach(posts -> {
+            String link = posts.getLink();
+            if(link.contains("gather.town")){
+                String spaceid = link.substring(link.indexOf("app/")+4,link.lastIndexOf("/"));
+                String spacename = link.substring(link.lastIndexOf("/")+1, link.length());
+                String variables = "{\"apikey\": \"QUNCVEQGILsqe5\",\"spaceid\": \""+spaceid+"\",\"spacename\" : \""+spacename+"\"}";
+
+                try {
+                    ResponseEntity<PlayerCountDto> response =
+                            restTemplate.postForEntity(URL, new HttpEntity<>(createJsonQueries(query,opertationName,variables), headers), PlayerCountDto.class);
+                    int playerCount = Objects.requireNonNull(response.getBody()).getData().getGameData().playerCount;
+                    posts.setPlayerCount(playerCount);
+                } catch (JsonProcessingException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        long stopTime = System.currentTimeMillis();
+        long elapsedTime = stopTime - startTime;
+
+        System.out.println(elapsedTime);
+    }
