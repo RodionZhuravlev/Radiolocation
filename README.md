@@ -1,1 +1,2 @@
 # Radiolocation
+Radiolocation, also known as radiolocating or radiopositioning, is the process of finding the location of something through the use of radio waves. It generally refers to passive uses, particularly radar—as well as detecting buried cables, water mains, and other public utilities. It is similar to radionavigation, but radiolocation usually refers to passively finding a distant object rather than actively one's own position. Both are types of radiodetermination. Radiolocation is also used in real-time locating systems (RTLS) for tracking valuable assets.
